@@ -7,15 +7,16 @@ indent: 4, maxerr: 50, node: true */
     var https = require("https");
     var fs = require("fs");
     var connect = require("connect");
+    var path = require("path");
     
     var options = {
-        key: fs.readFileSync("cert/certificate.key"),
-        cert: fs.readFileSync("cert/certificate.cert")
+        key: fs.readFileSync(path.resolve(__dirname, "cert/certificate.key")),
+        cert: fs.readFileSync(path.resolve(__dirname, "cert/certificate.cert"))
     };
     
     var app = connect()
         .use(connect.logger("dev"))
-        .use(connect["static"]("public"))
+        .use(connect["static"](path.resolve(__dirname, "public")))
         .use(function (req, res) {
             res.end("hello world\n");
         });
