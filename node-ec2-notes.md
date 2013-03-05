@@ -65,10 +65,10 @@ COMMIT
 2. Add a script to the "/etc/network/if-pre-up.d" that installs these rules. For example, make a file called "nat-redirect-80-443" with the following content:
 
     ```bash
-#!/bin/sh
+    #!/bin/sh
 
-iptables-restore < /etc/network/redirect-80-443.iptables
-```
+    iptables-restore < /etc/network/redirect-80-443.iptables
+    ```
 
 3. Reboot the instance to really test this works right, or just run the script if you want to live dangerously.
 
