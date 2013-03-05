@@ -43,7 +43,7 @@ fi
 
 Only privileged users (i.e. root) can open ports 80/443. However, running node as a privileged user is a bad idea from a security perspective. Apache uses a "dropping privileges" approach to get around this. However, this workflow isn't really worked out for node.
 
-An alternative (that I very much prefer) is to set up iptables rules that forward ports 80 and 443 to unprivileged ports (e.g. 3080 and 3443). This way, the node process can be run _completely_ as an unpriviledged service. Node doesn't need to know anything about 80/443.
+An alternative (that I very much prefer) is to set up iptables NAT rules that forward ports 80 and 443 to unprivileged ports (e.g. 3080 and 3443). This way, the node process can be run _completely_ as an unpriviledged service. Node doesn't need to know anything about 80/443.
 
 Adding these rules can be done as follows (in this example, port 3080 is being forwarded to 80 and 3443 is being forwarded to 443). Note that all of this will need to be done as root.
 
@@ -72,8 +72,20 @@ COMMIT
 
 3. Make the script executable with ```chmod a+x nat-redirect-80-443```
 4. Reboot the instance to really test this works right, or just run the script if you want to live dangerously.
+5. Spin up a node server on port 3080 and see if you can access it from the outside world on port 80 (make sure your ec2 security group is set up to allow port 80):
 
+    ```javascript
+var http = require('http');
+http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Hello World\n');
+}).listen(3080, '0.0.0.0');
+console.log('Server running at http://0.0.0.0:3080/');
+```
 
 ## Running node as a service
 
+
+
 ## SSL with node
+
