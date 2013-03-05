@@ -99,5 +99,39 @@ In this section, I give an example of how to create a static connect-based webse
     openssl rsa -in privkey.pem -out certificate.key
     openssl x509 -in certificate.csr -out certificate.cert -req -signkey certificate.key -days 365
     ```
+4. Add a "public" directory (for testing) to the "example" directory and put some html content in it. (e.g. an index.html file and some pictures)
+5. Set up a static connect server using the certificates from above. Something like:
+
+    ```javascript
+    /*jslint vars: true, plusplus: true, devel: true, nomen: true,
+    indent: 4, maxerr: 50, node: true */
+    
+    (function () {
+        "use strict";
+        
+        var https = require("https");
+        var fs = require("fs");
+        var connect = require("connect");
+        
+        var options = {
+            key: fs.readFileSync("cert/certificate.key"),
+            cert: fs.readFileSync("cert/certificate.cert")
+        };
+        
+        var app = connect()
+            .use(connect.logger("dev"))
+            .use(connect["static"]("public"))
+            .use(function (req, res) {
+                res.end("hello world\n");
+            });
+        
+        var server = https.createServer(options, app)
+            .listen(3443, "0.0.0.0");
+        
+        console.log("Server running at http://0.0.0.0:3443/");
+    }());
+    ````
+
+6. Run the server (```node server.js```) and visit your IP over https to verify that it works (obviously, you will get a certificate error, since it's self-signed).
 
 ## Running node as a service
