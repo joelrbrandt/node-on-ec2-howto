@@ -14,6 +14,7 @@ Setting up a Node server on EC2
 9. Optional: Log out and then try to ssh in with your new account and a password.
 10. Update installed packages with ```sudo apt-get update``` followed by ```sudo apt-get dist-upgrade```
 11. Optional: Install emacs23-nox with ```sudo apt-get install emacs23-nox``` so Joel can use the computer. 
+12. Optional: Make an image of the instance in the current state (or after setting up node).
 
 ## Setting up node
 
@@ -27,7 +28,14 @@ For security, ease of upgrading, and so-on, I recommend installing the node exec
 4. Switch to the node directory and check out a version tag (e.g. ```git checkout v0.8.21```)
 5. Configure node to install to a local directory (e.g. ```./configure --prefix=~/bin/node```)
 6. Run ```make``` (using the option "-j8" seems to be about right on a medium instance)
-7. Run ```make install```
+7. Run ```make install```. That will put all of node in the "prefix" path specified above. This directory is completely self-contained and can be moved, copied to other users, etc.
+8. Optional: Put the node/bin directory in your path. Add something like the following to your .profile:
+```bash
+# set PATH so it includes user's private node 'bin' directory if it exists
+if [ -d "$HOME/bin/node/bin" ] ; then
+    PATH="$HOME/bin/node/bin:$PATH"
+fi
+```
 
 
 ## Running node as an unprivileged user on ports 80/443
