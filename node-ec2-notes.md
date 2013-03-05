@@ -83,9 +83,21 @@ Adding these rules can be done as follows (in this example, port 3080 is being f
     console.log('Server running at http://0.0.0.0:3080/');
     ```
 
-## Running node as a service
-
-
-
 ## SSL with node
 
+In this section, I give an example of how to create a static connect-based webserver that serves data over https with a self-signed certificate.
+
+1. Make a directory, (e.g. "example") to hold everything, and switch to that dir
+2. install connect with ```npm install connect```
+3. make a self-signed certificate with the following commands:
+
+    ```bash
+    mkdir cert
+    cd cert
+    openssl req -new > certificate.csr
+    # fill out info
+    openssl rsa -in privkey.pem -out certificate.key
+    openssl x509 -in certificate.csr -out certificate.cert -req -signkey certificate.key -days 365
+    ```
+
+## Running node as a service
