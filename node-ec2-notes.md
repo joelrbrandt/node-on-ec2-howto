@@ -29,9 +29,9 @@ For security, ease of upgrading, and so-on, I recommend installing the node exec
 5. Configure node to install to a local directory (e.g. ```./configure --prefix=~/bin/node```)
 6. Run ```make``` (using the option "-j8" seems to be about right on a medium instance)
 7. Run ```make install```. That will put all of node in the "prefix" path specified above. This directory is completely self-contained and can be moved, copied to other users, etc.
-8. Optional: Put the node/bin directory in your path. Add something like the following to your .profile:
+8. Optional: Put the node/bin directory in your path. Add something like the following to your .profile (and then logging back out and back in):
 
-```bash
+    ```bash
 # set PATH so it includes user's private node 'bin' directory if it exists
 if [ -d "$HOME/bin/node/bin" ] ; then
     PATH="$HOME/bin/node/bin:$PATH"
