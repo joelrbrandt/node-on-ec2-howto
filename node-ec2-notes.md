@@ -70,7 +70,8 @@ COMMIT
     iptables-restore < /etc/network/redirect-80-443.iptables
     ```
 
-3. Reboot the instance to really test this works right, or just run the script if you want to live dangerously.
+3. Make the script executable with ```chmod a+x nat-redirect-80-443```
+4. Reboot the instance to really test this works right, or just run the script if you want to live dangerously.
 
 
 ## Running node as a service
