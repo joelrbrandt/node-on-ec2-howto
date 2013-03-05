@@ -112,15 +112,16 @@ In this section, I give an example of how to create a static connect-based webse
         var https = require("https");
         var fs = require("fs");
         var connect = require("connect");
+        var path = require("path");
         
         var options = {
-            key: fs.readFileSync("cert/certificate.key"),
-            cert: fs.readFileSync("cert/certificate.cert")
+            key: fs.readFileSync(path.resolve(__dirname, "cert/certificate.key")),
+            cert: fs.readFileSync(path.resolve(__dirname, "cert/certificate.cert"))
         };
         
         var app = connect()
             .use(connect.logger("dev"))
-            .use(connect["static"]("public"))
+            .use(connect["static"](path.resolve(__dirname, "public")))
             .use(function (req, res) {
                 res.end("hello world\n");
             });
@@ -135,3 +136,45 @@ In this section, I give an example of how to create a static connect-based webse
 6. Run the server (```node server.js```) and visit your IP over https to verify that it works (obviously, you will get a certificate error, since it's self-signed).
 
 ## Running node as a service
+
+I like to use [Supervisor](http://supervisord.org/) to run processes as services on Ubuntu. It handles startup/shutdown as specific users and log rotation/file size limits. It also has the ability to automatically restart processes if they crash.
+
+Here's how to set things up:
+
+1. Optional: Set up a new user you want your node process to run as. It should have limited privileges. Copy your code and node install to this user's home directory (adjusting permissions accordingly). Switch back to your sudo-enabled user to do the rest of these steps.
+2. Install supervisor with ```sudo apt-get install supervisor```
+3. Create a config file in /etc/supervisor/conf.d that looks something like this (taking care to adjust all paths and possibly change the "user" variable).
+
+    ```
+    [program:example]
+    command=/home/jbrandt/bin/node/bin/node /home/jbrandt/example/server/server.js
+    process_name=%(program_name)s
+    numprocs=1
+    directory=/home/jbrandt/example
+    umask=022
+    priority=999
+    autostart=true
+    autorestart=true
+    startsecs=10
+    startretries=3
+    exitcodes=0,2
+    stopsignal=TERM
+    stopwaitsecs=10
+    user=jbrandt
+    redirect_stderr=false
+    stdout_logfile=/home/jbrandt/example/log/out.log
+    stdout_logfile_maxbytes=1MB
+    stdout_logfile_backups=10
+    stdout_capture_maxbytes=1MB
+    stderr_logfile=/home/jbrandt/example/log/err.log
+    stderr_logfile_maxbytes=1MB
+    stderr_logfile_backups=10
+    stderr_capture_maxbytes=1MB
+    environment=A=1,B=2
+    serverurl=AUTO
+    ```
+    
+4. Launch ```sudo supervisorctl``` and tell supervisor to reload it's configs with the 'reload' command
+5. Your process should automatically start. You can exit supervisorctl and check things out with 'ps'.
+6. Reboot your ec2 instance to make sure everything restarts as expected.
+
